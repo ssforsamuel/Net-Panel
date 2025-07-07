@@ -1,0 +1,24 @@
+name: Sync Upstream
+on:
+  schedule:
+    - cron: '0 3 * * *'  # 每天 UTC 时间 3:00 运行（相当于北京时间 11:00）
+  workflow_dispatch:     # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync Fork
+        uses: upstream-sync/sync-fork@v1
+        with:
+          upstream_repository: bia-pain-bache/BPB-Worker-Panel  # 原始仓库名（如 torvalds/linux）
+          target_branch: Net-Panel                               # 你的分支名
+          git_pull_args: --rebase --ff-only
+      - name: Push Changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git push
